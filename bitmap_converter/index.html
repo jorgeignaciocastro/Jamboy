@@ -1,0 +1,55 @@
+<canvas width="16" height="16" id="canvas"></canvas>
+
+<textarea id="result"></textarea>
+
+<script>
+    var result = document.getElementById("result");
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+
+    var const_dic = {
+        "#da0256" : "background",
+        "#1b02da" : "ST7735_BLUE",
+        "#1eda02" : "ST7735_GREEN",
+        "#02dad8" : "ST7735_CYAN",
+        "#bfda02" : "ST7735_YELLOW"
+    };
+
+    function rgb2hex(rgb){
+        rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        return (rgb && rgb.length === 4) ? "#" +
+               ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+               ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+               ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+    }
+
+    function calculate(file) {
+        var img = new Image();
+
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+
+            var imgData = ctx.getImageData(0, 0, c.width, c.width);
+            var temp = "";
+            var y = -1;
+            var x = -1;
+
+            for (var i=0; i < imgData.data.length; i += 4) {
+                var hex = rgb2hex("rgb(" + imgData.data[i] + "," + imgData.data[i + 1] + "," + imgData.data[i + 2] + ")");
+
+                if (i % (c.width * 4) === 0) {
+                    x = -1;
+                    y++;
+                }
+
+                x++;
+
+                temp += "drawPixel( j.x +" + x + ", j.y + " + y + "," + const_dic[hex] + "); ";
+            }
+
+            result.innerHTML = temp;
+        };
+
+        img.src = file;
+    }
+</script>
