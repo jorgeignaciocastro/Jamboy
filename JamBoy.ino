@@ -3,34 +3,19 @@
 #include <SPI.h>
 
 #include "pitches.h";
+#include "pins.h";
 
+#include "global.h";
 
-#define TFT_CS     10
-#define TFT_RST    9  
-#define TFT_DC     8
-
-#define TFT_SCLK 13   
-#define TFT_MOSI 11   
-
-const int maxWidth =   160;
-const int maxHeight =  128;
-
-const int buttonAPin = 3;
-const int buttonBPin = 4;
-const int buttonCPin = 5;
-
-const int audioPin = 2;
-
-
-const int DELTA_MAX = 1000;
-const int DELTA_MIN = 50;
 
 int buttonAState = 0;
 int buttonBState = 0;
 int buttonCState = 0;
 
+int analogXValue = 0;  // joystic X analog
+int analogYValue = 0;  // joystic Y analog
 
-
+// player constants
 struct PLAYER {
   int pSize = 8;
   int x = 0;
@@ -40,14 +25,6 @@ struct PLAYER {
 };
 
 PLAYER jugador;
-
-// player constants
-
-int analogY = A1;
-int analogX = A0;
-
-int analogXValue = 0;  // joystic X analog
-int analogYValue = 0;  // joystic Y analog
 
 
 // audio
@@ -78,8 +55,8 @@ void setup(void) {
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(0);
   tft.setCursor(0,80);
-  tft.println("Hello Global Game Jam");
-  tft.setCursor(0,0);  
+  //tft.println("Hello Global Game Jam");
+   
   
 
 
@@ -218,11 +195,9 @@ void checkJoystic() {
 }
 
 
-
 // main loop
 
 void loop() {
-
 
     //listen pins
     checkJoystic();
