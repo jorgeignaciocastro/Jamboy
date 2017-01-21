@@ -8,6 +8,7 @@
 #include "global.h";
 
 
+
 int buttonAState = 0;
 int buttonBState = 0;
 int buttonCState = 0;
@@ -15,13 +16,17 @@ int buttonCState = 0;
 int analogXValue = 0;  // joystic X analog
 int analogYValue = 0;  // joystic Y analog
 
+int background = ST7735_BLACK;
+
 // player constants
 struct PLAYER {
   int pSize = 8;
   int x = 0;
   int y = 0; 
-  int color = 1;
-  byte dir = 0; 
+  int color = ST7735_WHITE;
+
+  int dirX = 0; 
+  int dirY = 0;
 };
 
 PLAYER jugador;
@@ -39,16 +44,18 @@ int noteDurations[] = {
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
+#define drawPixel(a, b, c) tft.setAddrWindow(a, b, a, b); tft.pushColor(c)
+
+
 void setup(void) {
 
   Serial.begin(9600);
-  
   pinMode(buttonAPin, INPUT);
   pinMode(buttonBPin, INPUT);
   pinMode(buttonCPin, INPUT_PULLUP);
 
   tft.initR(INITR_BLACKTAB); 
-  tft.fillScreen(ST7735_BLACK); 
+  tft.fillScreen(background); 
   tft.setRotation(1);
 
   //tft print function!
@@ -179,17 +186,21 @@ void checkJoystic() {
 
     // check y axis
     if(analogYValue > DELTA_MAX) {
-      Button_DOWN();           
+      Button_DOWN();
+      jugador.dirY = DIR_DOWN;           
     } else if(analogYValue < DELTA_MIN) {
-      Button_UP();      
+      Button_UP();
+      jugador.dirY = DIR_UP;
     }
 
 
    // check x axis    
    if(analogXValue > DELTA_MAX) {
       Button_LEFT();     
+      jugador.dirX = DIR_LEFT;
     } else if(analogXValue < DELTA_MIN) {
       Button_RIGHT();
+      jugador.dirX = DIR_RIGHT;
     }
   
 }
@@ -203,10 +214,20 @@ void loop() {
     checkJoystic();
 
     //render baby
-    tft.fillRoundRect(jugador.x, jugador.y, jugador.pSize, jugador.pSize, 4, jugador.color);
+    tft.fillRect(jugador.x - 1  , jugador.y -1, jugador.pSize  + 1 , 1, background);
+    tft.fillRect(jugador.x - 1 , jugador.y + jugador.pSize, jugador.pSize + 2, 1, background);
+
+    
+    tft.fillRect(jugador.x -1 , jugador.y - 1, 1 , jugador.pSize + 1, background);
+    tft.fillRect(jugador.x + jugador.pSize , jugador.y - 1, 1,  jugador.pSize + 1 , background);
+
+    
+    tft.fillRect(jugador.x, jugador.y, jugador.pSize, jugador.pSize, jugador.color);
+    //drawPixel(jugador.x, jugador.y, jugador.color);
+    //tft.fillRoundRect(jugador.x, jugador.y, jugador.pSize, jugador.pSize, 4, jugador.color);
 
     //Debug
-    Serial.println("DEBU");   
+    //Serial.println("DEBdfffffffffffffffffU");   
 
 }
 
