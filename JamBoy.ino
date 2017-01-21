@@ -12,8 +12,8 @@
 #define TFT_SCLK 13   
 #define TFT_MOSI 11   
 
-const int maxWidth = 128;
-const int maxHeight =  160;
+const int maxWidth =   160;
+const int maxHeight =  128;
 
 const int buttonAPin = 3;
 const int buttonBPin = 4;
@@ -31,15 +31,17 @@ int buttonCState = 0;
 
 
 
+struct PLAYER {
+  int pSize = 8;
+  int x = 0;
+  int y = 0; 
+  int color = 1;
+  byte dir = 0; 
+};
+
+PLAYER jugador;
+
 // player constants
-const int pSize = 8;
-
-int x = 0;
-int y = 0;
-
-
-
-int color = 1;
 
 int analogY = A1;
 int analogX = A0;
@@ -70,7 +72,7 @@ void setup(void) {
 
   tft.initR(INITR_BLACKTAB); 
   tft.fillScreen(ST7735_BLACK); 
- 
+  tft.setRotation(1);
 
   //tft print function!
   tft.setTextColor(ST7735_WHITE);
@@ -78,6 +80,7 @@ void setup(void) {
   tft.setCursor(0,80);
   tft.println("Hello Global Game Jam");
   tft.setCursor(0,0);  
+  
 
 
     for (int thisNote = 0; thisNote < 8; thisNote++) {
@@ -104,18 +107,62 @@ void setup(void) {
 int checkMax(int pos, int maximum, bool invert) {
   
   if(invert == true) {
-    if (pos < 1) {
-        pos = 1;
+    if (pos < 0) {
+        pos = 0;
+        tone(audioPin, melody[0], 100);
+
     }
   } else {
-    if (pos > maximum - pSize) {
-        pos = maximum - pSize;
+    if (pos > maximum - jugador.pSize) {
+        pos = maximum - jugador.pSize;
+        tone(audioPin, melody[0], 100);
     }
   }
 
   return pos;
   
 }
+
+
+////////////////////////////////////// BUTTONS CALLBACKS ////////////////////////////////////////
+
+
+void Button_A() {
+    jugador.color = ST7735_GREEN;
+}
+
+void Button_B() {
+    jugador.color = ST7735_RED;
+}
+
+void Button_C() {
+    jugador.color = ST7735_WHITE;
+}
+
+
+// Directionals 
+
+void Button_UP() {
+  jugador.y = jugador.y - 1;  
+  jugador.y = checkMax(jugador.y, maxHeight, true);
+}
+
+void Button_DOWN() {
+  jugador.y = jugador.y + 1;
+  jugador.y = checkMax(jugador.y, maxHeight, false);      
+}
+
+void Button_LEFT() {
+  jugador.x = jugador.x + 1;
+  jugador.x = checkMax(jugador.x, maxWidth, false);            
+}
+
+void Button_RIGHT() {
+  jugador.x = jugador.x - 1;  
+  jugador.x = checkMax(jugador.x, maxWidth, true);            
+}
+
+////////////////////////////////////// END BUTTONS CALLBACKS ////////////////////////////////////
 
 
 //check inputs
@@ -129,8 +176,47 @@ void checkJoystic() {
     //read Analogs
     analogXValue = analogRead(analogX);
     analogYValue = analogRead(analogY);
+
+    //Check BUTTONS
+  
+    if(buttonCState == HIGH) {
+       
+    } else {
+      Button_C();
+    }
+    
+
+    if(buttonAState == HIGH) {
+      
+    } else {
+      Button_A();
+    }
+
+     if(buttonBState == HIGH) {
+      
+    } else {
+      Button_B();
+    }
+
+
+
+    // check y axis
+    if(analogYValue > DELTA_MAX) {
+      Button_DOWN();           
+    } else if(analogYValue < DELTA_MIN) {
+      Button_UP();      
+    }
+
+
+   // check x axis    
+   if(analogXValue > DELTA_MAX) {
+      Button_LEFT();     
+    } else if(analogXValue < DELTA_MIN) {
+      Button_RIGHT();
+    }
   
 }
+
 
 
 // main loop
@@ -141,52 +227,8 @@ void loop() {
     //listen pins
     checkJoystic();
 
-    if(buttonCState == HIGH) {
-       
-    } else {
-      color = ST7735_BLACK;
-    }
-    
-
-    if(buttonAState == HIGH) {
-      
-    } else {
-     color = ST7735_GREEN;
-    }
-
-     if(buttonBState == HIGH) {
-      
-    } else {
-     color = ST7735_RED;
-    }
-
-
-
-    // check y axis
-    if(analogYValue > DELTA_MAX) {
-      y = y + 1;
-      y = checkMax(y, maxHeight, false);      
-    }
-
-    if(analogYValue < DELTA_MIN) {
-      y = y - 1;  
-      y = checkMax(y, maxHeight, true);
-    }
-
-
-   // check x axis    
-   if(analogXValue > DELTA_MAX) {
-      x = x + 1;
-      x = checkMax(x, maxWidth, false);      
-    }
-
-    if(analogXValue < DELTA_MIN) {
-      x = x - 1;  
-      x = checkMax(x, maxWidth, true);
-    }
-
     //render baby
-    tft.fillRoundRect(x, y, pSize, pSize, 0, color);
+    tft.fillRoundRect(jugador.x, jugador.y, jugador.pSize, jugador.pSize, 4, jugador.color);
 
     //Debug
     Serial.println("DEBU");   
