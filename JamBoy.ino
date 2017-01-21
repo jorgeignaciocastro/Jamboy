@@ -17,7 +17,7 @@ const int maxHeight =  160;
 
 const int buttonAPin = 3;
 const int buttonBPin = 4;
-const int buttonCPin = 4;
+const int buttonCPin = 5;
 
 const int audioPin = 2;
 
@@ -66,7 +66,7 @@ void setup(void) {
   
   pinMode(buttonAPin, INPUT);
   pinMode(buttonBPin, INPUT);
-  pinMode(buttonCPin, INPUT);
+  pinMode(buttonCPin, INPUT_PULLUP);
 
   tft.initR(INITR_BLACKTAB); 
   tft.fillScreen(ST7735_BLACK); 
@@ -141,16 +141,23 @@ void loop() {
     //listen pins
     checkJoystic();
 
+    if(buttonCState == HIGH) {
+       
+    } else {
+      color = ST7735_BLACK;
+    }
+    
+
     if(buttonAState == HIGH) {
       
     } else {
-     color += 1000;
+     color = ST7735_GREEN;
     }
 
      if(buttonBState == HIGH) {
       
     } else {
-     color -= 1000;
+     color = ST7735_RED;
     }
 
 
