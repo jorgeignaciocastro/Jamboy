@@ -106,11 +106,8 @@ void setup(void) {
   tft.initR(INITR_BLACKTAB); 
   tft.fillScreen(background); 
   tft.setRotation(1);
-
-  //tft print function!
-  tft.setTextColor(ST7735_WHITE);
-  tft.setTextSize(0);
   
+  drawMenu();
    
 
     for (int thisNote = 0; thisNote < 8; thisNote++) {
@@ -124,15 +121,37 @@ void setup(void) {
     // to distinguish the notes, set a minimum time between them.
     // the note's duration + 30% seems to work well:
     int pauseBetweenNotes = noteDuration * 1.30;
-    //delay(pauseBetweenNotes);
+    delay(pauseBetweenNotes);
     // stop the tone playing:
     noTone(audioPin);
   }
+
+  tft.fillScreen(background); 
+
 
   drawMap(mapa1);
   
 }
 
+
+void drawMenu() {
+
+  tft.drawLine( 39, 45, 120, 45, ST7735_WHITE);
+
+  tft.drawLine( 39, 62, 120, 62, ST7735_WHITE);
+
+  tft.setCursor(40, 50);
+  tft.setTextColor(ST7735_WHITE);
+  tft.setTextWrap(true);
+  tft.println("La leyenda de");
+  tft.setTextSize(2);
+  tft.setCursor(45, 68);
+  tft.println("Chelda");
+  
+  
+
+  
+}
 
 
 
