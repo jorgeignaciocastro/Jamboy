@@ -22,6 +22,10 @@ TimerTask btn_C;
 boolean buttonCFlag = false;
 int buttonCState = 0;
 
+bool isMenu;
+
+
+
 //Joystick values
 TimerTask analog_X;
 TimerTask analog_Y;
@@ -126,13 +130,21 @@ void setup(void) {
     noTone(audioPin);
   }
 
-  tft.fillScreen(background); 
-
-
-  drawMap(mapa1);
   
 }
 
+
+// init game
+
+void initGame () {
+  if(isMenu == true) {
+    isMenu = false;
+    tft.fillScreen(background); 
+    drawMap(mapa1);
+  }
+}
+
+// draw menu
 
 void drawMenu() {
 
@@ -147,9 +159,7 @@ void drawMenu() {
   tft.setTextSize(2);
   tft.setCursor(45, 68);
   tft.println("Chelda");
-  
-  
-
+  isMenu = true; 
   
 }
 
@@ -160,6 +170,7 @@ void drawMenu() {
 
 void Button_A() {
     //jugador.color = ST7735_GREEN;
+  initGame();
 }
 
 
@@ -420,9 +431,11 @@ void loop() {
 
     //listen pins
     checkJoystic();
-    gameUpdate();
     //render baby
-    drawPlayer(jugador, background);
+    if(isMenu == false) {
+        gameUpdate();
+        drawPlayer(jugador, background);
+    }
 
 }
 
