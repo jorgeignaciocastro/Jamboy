@@ -8,4 +8,4 @@ Why? Because it was fun and challenging. Made with love!
 
 ## Want to render your own sprite? No Problem!
 
-The Jamboy contain a bitmap converter tool done in JS, it's already attached on the proyect to start using it.
+The Jamboy contain a bitmap converter tool done in JS done by [Matias Iacono](https://github.com/MatiasIac), it's already attached on the proyect to start using it.
